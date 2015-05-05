@@ -1,16 +1,16 @@
 <?php
 
-	
+
 	namespace LiftKit\Tests\Unit\Output;
-	
+
 	use LiftKit\Output\Html;
 	use PHPUnit_Framework_TestCase as TestCase;
-	
-	
+
+
 	class HtmlTest extends TestCase
 	{
-		
-		
+
+
 		/**
 		 * @dataProvider sanitizeProvider
 		 */
@@ -21,16 +21,59 @@
 				Html::sanitize($string)
 			);
 		}
-		
-		
+
+
+		/**
+		 * @param $string
+		 * @param $characters
+		 * @param $expected
+		 *
+		 * @dataProvider excerptProvider
+		 */
+		public function testExcerpt ($string, $characters, $expected)
+		{
+			$this->assertEquals(
+				$expected,
+				Html::excerpt($string, $characters)
+			);
+		}
+
+
 		public function sanitizeProvider ()
 		{
-			return array(
-				array('"&asdasd7awdkn@#;"'),
-				array('ersdfaHUGbjnadn9871e'),
-				array('<>&SHDnbkwhdsa4'),
-				array('&copy'),
-				array('<script>alert("hello");</script>'),
-			);
+			return [
+				['"&asdasd7awdkn@#;"'],
+				['ersdfaHUGbjnadn9871e'],
+				['<>&SHDnbkwhdsa4'],
+				['&copy'],
+				['<script>alert("hello");</script>'],
+			];
+		}
+
+
+		public function excerptProvider ()
+		{
+			return [
+				[
+					'123456789',
+					3,
+					'123...',
+				],
+				[
+					'123456789',
+					10,
+					'123456789',
+				],
+				[
+					'<tag>123</tag>456789',
+					10,
+					'123456789',
+				],
+				[
+					'<tag>123</tag>456789',
+					3,
+					'123...',
+				],
+			];
 		}
 	}
